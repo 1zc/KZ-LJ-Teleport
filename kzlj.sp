@@ -34,7 +34,7 @@ public void OnMapStart()
 
 public Action Command_SetLJ(int client, int args)
 {
-    char sQuery[512];
+    char sQuery[512]; 
     
     FormatEx(sQuery, sizeof(sQuery), "SELECT * FROM `ljroom` WHERE map = '%s';", gS_Map);
     gH_SQL.Query(SQL_CreateLJ_Callback, sQuery, GetClientSerial(client));  
