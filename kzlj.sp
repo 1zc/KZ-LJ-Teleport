@@ -34,7 +34,7 @@ public void OnMapStart()
 
 public Action Command_SetLJ(int client, int args)
 {
-    char sQuery[512]; 
+    char sQuery[512];
     
     FormatEx(sQuery, sizeof(sQuery), "SELECT * FROM `ljroom` WHERE map = '%s';", gS_Map);
     gH_SQL.Query(SQL_CreateLJ_Callback, sQuery, GetClientSerial(client));  
@@ -137,7 +137,7 @@ public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] er
 public void SQL_DeleteLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
     int client = GetClientFromSerial(data);
-    if(results == null)
+	if(results == null)
 	{
 		LogError("Deletion failed. Reason: %s", error);
 
@@ -187,4 +187,4 @@ stock bool IsValidClient(client)
     }    
     
     return false;
-} 
+}
