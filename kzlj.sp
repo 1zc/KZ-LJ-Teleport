@@ -56,12 +56,12 @@ public Action Command_LJ(int client, int args)
 
 public void SQL_CreateTable_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
-	if(results == null)
-	{
-		LogError("Table could not be created. Reason: %s", error);
+    if(results == null)
+    {
+	LogError("Table could not be created. Reason: %s", error);
 
-		return;
-	}
+	return;
+    }
 }
 
 public void SQL_CreateLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
@@ -165,18 +165,18 @@ void SQL_DBConnect()
 
 stock Database GetTimerDatabaseHandle()
 {
-	Database db = null;
-	char sError[255];
+    Database db = null;
+    char sError[255];
 
-	if(SQL_CheckConfig("kzlj"))
+    if(SQL_CheckConfig("kzlj"))
+    {
+	if((db = SQL_Connect("kzlj", true, sError, sizeof(sError))) == null)
 	{
-		if((db = SQL_Connect("kzlj", true, sError, sizeof(sError))) == null)
-		{
-			SetFailState("Failed to connect to database. Reason: %s", sError);
-		}
+		SetFailState("Failed to connect to database. Reason: %s", sError);
 	}
+    }
 
-	return db;
+return db;
 }
 
 stock bool IsValidClient(client)
