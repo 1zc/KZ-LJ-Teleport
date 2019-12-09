@@ -67,11 +67,14 @@ public void SQL_CreateTable_Callback(Database db, DBResultSet results, const cha
 public void SQL_CreateLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
     int client = GetClientFromSerial(data);
-    if((results == null || results.RowCount > 0) && IsValidClient(client))
+    if (results.RowCount > 0)
     {
-	PrintToChat(client, "LJ teleport already exists. Delete the existing one before creating a new one.");
+        if (IsValidClient(client))
+        {
+            PrintToChat(client, "LJ teleport already exists. Delete the existing one before creating a new one.");
+        }
 
-	return;
+        return;
     }
     
     char sQuery[512];
@@ -95,7 +98,7 @@ public void SQL_CreateLJ2_Callback(Database db, DBResultSet results, const char[
     int client = GetClientFromSerial(data);
     if(results == null)
     {
-	return;
+    	return;
     }
     
     if(IsValidClient(client))
@@ -107,9 +110,13 @@ public void SQL_CreateLJ2_Callback(Database db, DBResultSet results, const char[
 public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
     int client = GetClientFromSerial(data);
-    if((results == null || results.RowCount == 0) && IsValidClient(client))
+    if (results.RowCount > 0)
     {
-        PrintToChat(client, "This map does not have a LJ room.");
+        if (IsValidClient(client))
+        {
+            PrintToChat(client, "This map does not have a LJ room.");
+        }
+
         return;
     }
 
@@ -172,7 +179,7 @@ stock Database GetTimerDatabaseHandle()
     {
 	if((db = SQL_Connect("kzlj", true, sError, sizeof(sError))) == null)
 	{
-	    SetFailState("Failed to connect to database. Reason: %s", sError);
+		SetFailState("Failed to connect to database. Reason: %s", sError);
 	}
     }
 
@@ -181,10 +188,5 @@ stock Database GetTimerDatabaseHandle()
 
 stock bool IsValidClient(client)
 {
-    if(client >= 1 && client <= MaxClients && IsValidEntity(client) && IsClientConnected(client) && IsClientInGame(client))
-    {    
-        return true;
-    }    
-    
-    return false;
+    return (client >= 1 && client <= MaxClients) && IsClientInGame(client);
 }
