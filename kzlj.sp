@@ -187,4 +187,4 @@ stock bool IsValidClient(client)
     }    
     
     return false;
-}
+} 
