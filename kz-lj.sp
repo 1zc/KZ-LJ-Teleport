@@ -5,7 +5,7 @@
 #include <kztimer>
 
 Database gH_SQL;
-float coords[64][3];
+float gF_coords[64][3];
 float gF_angles[64][3];
 char gS_Map[64];
 
@@ -36,22 +36,22 @@ public Action Command_SetLJ(int client, int args)
 {
     char sQuery[512];
     
-    FormatEx(sQuery, 512, "SELECT * FROM `ljroom` WHERE map = '%s';", gS_Map);
+    FormatEx(sQuery, sizeof(sQuery), "SELECT * FROM `ljroom` WHERE map = '%s';", gS_Map);
     gH_SQL.Query(SQL_CreateLJ_Callback, sQuery, GetClientSerial(client));  
 }
 
 public Action Command_DeleteLJ(int client, int args)
 {
     char sQuery[512];
-    FormatEx(sQuery, 512, "DELETE FROM `ljroom` WHERE map = '%s';", gS_Map);
+    FormatEx(sQuery, sizeof(sQuery), "DELETE FROM `ljroom` WHERE map = '%s';", gS_Map);
     gH_SQL.Query(SQL_DeleteLJ_Callback, sQuery, GetClientSerial(client));
 }
 
 public Action Command_LJ(int client, int args)
 {
     char sQuery[512];
-    FormatEx(sQuery, 512, "SELECT * FROM `ljroom` WHERE map = '%s';", gS_Map);
-    gH_SQL.Query(SQL_GetLJ_Callback, sQuery, GetClientSerial(client), DBPrio_Low);  
+    FormatEx(sQuery, sizeof(sQuery), "SELECT * FROM `ljroom` WHERE map = '%s';", gS_Map);
+    gH_SQL.Query(SQL_GetLJ_Callback, sQuery, GetClientSerial(client));  
 }
 
 public void SQL_CreateTable_Callback(Database db, DBResultSet results, const char[] error, any data)
@@ -67,7 +67,7 @@ public void SQL_CreateTable_Callback(Database db, DBResultSet results, const cha
 public void SQL_CreateLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
     int client = GetClientFromSerial(data);
-	if(results == null || results.RowCount > 0)
+    if((results == null || results.RowCount > 0) && IsValidClient(client))
 	{
 		PrintToChat(client, "LJ teleport already exists. Delete the existing one before creating a new one.");
 
@@ -80,13 +80,13 @@ public void SQL_CreateLJ_Callback(Database db, DBResultSet results, const char[]
     
     GetEntPropVector(client, Prop_Send, "m_vecOrigin", origin);
     GetClientEyeAngles(client, angle);
-    coords[client][0] = origin[0];
-    coords[client][1] = origin[1];
-    coords[client][2] = origin[2];
+    gF_coords[client][0] = origin[0];
+    gF_coords[client][1] = origin[1];
+    gF_coords[client][2] = origin[2];
     gF_angles[client][0] = angle[0];
     gF_angles[client][1] = angle[1];
     
-    FormatEx(sQuery, 512, "INSERT INTO `ljroom` VALUES('%s', %.2f, %.2f, %.2f, %.2f, %.2f);", gS_Map, origin[0], origin[1], origin[2], angle[0], angle[1]);
+    FormatEx(sQuery, sizeof(sQuery), "INSERT INTO `ljroom` VALUES('%s', %.2f, %.2f, %.2f, %.2f, %.2f);", gS_Map, origin[0], origin[1], origin[2], angle[0], angle[1]);
     gH_SQL.Query(SQL_CreateLJ2_Callback, sQuery, GetClientSerial(client)); 
 }
 
@@ -98,16 +98,19 @@ public void SQL_CreateLJ2_Callback(Database db, DBResultSet results, const char[
 		return;
 	}
     
-    PrintToChat(client, "LJ teleport successfully created. ");
+    if(IsValidClient(client))
+    {
+        PrintToChat(client, "LJ teleport successfully created. ");
+    }
 }
 
 public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
     int client = GetClientFromSerial(data);
-	if(results == null || results.RowCount == 0)
+    if((results == null || results.RowCount == 0) && IsValidClient(client))
 	{
         PrintToChat(client, "This map does not have a LJ room.");
-		return;
+        return;
 	}
 
     float origin[3];
@@ -124,8 +127,11 @@ public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] er
         angle[1] = results.FetchFloat(5);
     }
    
-    KZTimer_StopTimer(client);
-    TeleportEntity(client, origin, angle, NULL_VECTOR);   
+    if(IsValidClient(client))
+    {
+        KZTimer_StopTimer(client);
+        TeleportEntity(client, origin, angle, NULL_VECTOR);   
+    }
 }
 
 public void SQL_DeleteLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
@@ -138,17 +144,23 @@ public void SQL_DeleteLJ_Callback(Database db, DBResultSet results, const char[]
 		return;
 	}
     
-    PrintToChat(client, "Successfully deleted LJ teleport.");
+    if(IsValidClient(client))
+    {
+        PrintToChat(client, "Successfully deleted LJ teleport.");
+    }
 }
 
 void SQL_DBConnect()
 {
     gH_SQL = GetTimerDatabaseHandle();
-    char sQuery[1024];
-    
-    FormatEx(sQuery, 1024, "CREATE TABLE IF NOT EXISTS `ljroom`(map VARCHAR(30) NOT NULL, `x` FLOAT(8) NOT NULL, `y` FLOAT(8) NOT NULL, `z` FLOAT(8) NOT NULL, `x1` FLOAT(8) NOT NULL, `y1` FLOAT(8) NOT NULL);");
-                            
-    gH_SQL.Query(SQL_CreateTable_Callback, sQuery);                          
+    if(gH_SQL != null)
+    {
+        char sQuery[512];
+        
+        FormatEx(sQuery, sizeof(sQuery), "CREATE TABLE IF NOT EXISTS `ljroom`(map VARCHAR(30) NOT NULL, `x` FLOAT(8) NOT NULL, `y` FLOAT(8) NOT NULL, `z` FLOAT(8) NOT NULL, `x1` FLOAT(8) NOT NULL, `y1` FLOAT(8) NOT NULL);");
+                                
+        gH_SQL.Query(SQL_CreateTable_Callback, sQuery);      
+    }    
 }
 
 stock Database GetTimerDatabaseHandle()
@@ -156,13 +168,23 @@ stock Database GetTimerDatabaseHandle()
 	Database db = null;
 	char sError[255];
 
-	if(SQL_CheckConfig("kztimer"))
+	if(SQL_CheckConfig("kzlj"))
 	{
-		if((db = SQL_Connect("kztimer", true, sError, 255)) == null)
+		if((db = SQL_Connect("kzlj", true, sError, sizeof(sError))) == null)
 		{
-			SetFailState("Timer startup failed. Reason: %s", sError);
+			SetFailState("Failed to connect to database. Reason: %s", sError);
 		}
 	}
 
 	return db;
+}
+
+stock bool IsValidClient(client)
+{
+    if(client >= 1 && client <= MaxClients && IsValidEntity(client) && IsClientConnected(client) && IsClientInGame(client))
+    {    
+        return true;
+    }    
+    
+    return false;
 }
