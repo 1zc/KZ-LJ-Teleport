@@ -176,7 +176,7 @@ stock Database GetTimerDatabaseHandle()
 	}
     }
 
-return db;
+    return db;
 }
 
 stock bool IsValidClient(client)
