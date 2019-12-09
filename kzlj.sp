@@ -172,7 +172,7 @@ stock Database GetTimerDatabaseHandle()
     {
 	if((db = SQL_Connect("kzlj", true, sError, sizeof(sError))) == null)
 	{
-		SetFailState("Failed to connect to database. Reason: %s", sError);
+	    SetFailState("Failed to connect to database. Reason: %s", sError);
 	}
     }
 
