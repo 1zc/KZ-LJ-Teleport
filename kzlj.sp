@@ -110,7 +110,7 @@ public void SQL_CreateLJ2_Callback(Database db, DBResultSet results, const char[
 public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
     int client = GetClientFromSerial(data);
-    if (results.RowCount > 0)
+    if (results.RowCount == 0 || results == null)
     {
         if (IsValidClient(client))
         {
