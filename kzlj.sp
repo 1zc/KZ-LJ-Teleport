@@ -68,11 +68,11 @@ public void SQL_CreateLJ_Callback(Database db, DBResultSet results, const char[]
 {
     int client = GetClientFromSerial(data);
     if((results == null || results.RowCount > 0) && IsValidClient(client))
-	{
-		PrintToChat(client, "LJ teleport already exists. Delete the existing one before creating a new one.");
+    {
+	PrintToChat(client, "LJ teleport already exists. Delete the existing one before creating a new one.");
 
-		return;
-	}
+	return;
+    }
     
     char sQuery[512];
     float origin[3];
@@ -94,9 +94,9 @@ public void SQL_CreateLJ2_Callback(Database db, DBResultSet results, const char[
 {
     int client = GetClientFromSerial(data);
     if(results == null)
-	{
-		return;
-	}
+    {
+	return;
+    }
     
     if(IsValidClient(client))
     {
@@ -108,19 +108,19 @@ public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] er
 {
     int client = GetClientFromSerial(data);
     if((results == null || results.RowCount == 0) && IsValidClient(client))
-	{
+    {
         PrintToChat(client, "This map does not have a LJ room.");
         return;
-	}
+    }
 
     float origin[3];
     float angle[3];
     
     while(results.FetchRow())
-	{
-		results.FetchString(0, gS_Map, 64);
+    {
+	results.FetchString(0, gS_Map, 64);
 
-		origin[0] = results.FetchFloat(1);
+	origin[0] = results.FetchFloat(1);
         origin[1] = results.FetchFloat(2);
         origin[2] = results.FetchFloat(3);       
         angle[0] = results.FetchFloat(4);
@@ -137,12 +137,12 @@ public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] er
 public void SQL_DeleteLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
 {
     int client = GetClientFromSerial(data);
-	if(results == null)
-	{
-		LogError("Deletion failed. Reason: %s", error);
+    if(results == null)
+    {
+	LogError("Deletion failed. Reason: %s", error);
 
-		return;
-	}
+	return;
+    }
     
     if(IsValidClient(client))
     {
