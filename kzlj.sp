@@ -61,7 +61,7 @@ public void SQL_CreateTable_Callback(Database db, DBResultSet results, const cha
 		LogError("Table could not be created. Reason: %s", error);
 
 		return;
-	}
+	} 
 }
 
 public void SQL_CreateLJ_Callback(Database db, DBResultSet results, const char[] error, any data)
