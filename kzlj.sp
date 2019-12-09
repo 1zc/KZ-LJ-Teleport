@@ -118,7 +118,7 @@ public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] er
     
     while(results.FetchRow())
     {
-	results.FetchString(0, gS_Map, 64);
+	results.FetchString(0, gS_Map, sizeof(gS_Map));
 
 	origin[0] = results.FetchFloat(1);
         origin[1] = results.FetchFloat(2);
