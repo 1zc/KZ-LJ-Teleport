@@ -110,7 +110,7 @@ public void SQL_CreateLJ_Callback(Database db, DBResultSet results, const char[]
 		{
 			PrintToChat(client, "LJ teleport already exists. Delete the existing one before creating a new one.");
 		}
-		
+
 		return;
 	}
 
@@ -221,7 +221,7 @@ stock Database GetTimerDatabaseHandle()
 
 	char error[256];
 	Database db = SQL_Connect("kzlj", true, error, sizeof(error));
-	
+
 	if (db == null || error[0] != '\0')
 	{
 		SetFailState("Failed to connect to database. Reason: %s", error);
