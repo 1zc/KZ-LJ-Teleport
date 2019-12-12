@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS `ljroom`(map VARCHAR(30) NOT NULL PRIMARY KEY, 
+									`x` FLOAT(8) NOT NULL, 
+									`y` FLOAT(8) NOT NULL, 
+									`z` FLOAT(8) NOT NULL, 
+									`x1` FLOAT(8) NOT NULL, 
+									`y1` FLOAT(8) NOT NULL);
+
 INSERT INTO `ljroom` (`map`, `x`, `y`, `z`, `x1`, `y1`) VALUES
 ('kz_abstruse_od2', 155.75, -11422.8, -395.46, 0.98, 91.09),
 ('kz_bananaysoda', -4246.01, -1916.08, -665.96, 1.21, 91.73),
