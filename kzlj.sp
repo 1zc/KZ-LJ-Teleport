@@ -36,7 +36,7 @@ public void OnPluginStart()
 	gB_KZT = true;
     }
 	
-	else if(LibraryExists("gokz-core"))
+    else if(LibraryExists("gokz-core"))
     {
 	gB_GOKZ = true;
     }
