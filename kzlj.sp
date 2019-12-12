@@ -22,7 +22,9 @@ public void OnPluginStart()
 {
     RegAdminCmd("sm_setlj", Command_SetLJ, ADMFLAG_GENERIC, "Set the teleport for the LJ room");
     RegAdminCmd("sm_deletelj", Command_DeleteLJ, ADMFLAG_GENERIC, "Delete the teleport for the LJ room");
+    RegAdminCmd("sm_dellj", Command_DeleteLJ, ADMFLAG_GENERIC, "Delete the teleport for the LJ room");
     RegConsoleCmd("sm_lj", Command_LJ, "Teleports to LJ room");
+    RegConsoleCmd("sm_ljroom", Command_LJ, "Teleports to LJ room");
 
     SQL_DBConnect();
 }
@@ -164,7 +166,7 @@ void SQL_DBConnect()
     {
         char sQuery[512];
         
-        FormatEx(sQuery, sizeof(sQuery), "CREATE TABLE IF NOT EXISTS `ljroom`(map VARCHAR(30) NOT NULL, `x` FLOAT(8) NOT NULL, `y` FLOAT(8) NOT NULL, `z` FLOAT(8) NOT NULL, `x1` FLOAT(8) NOT NULL, `y1` FLOAT(8) NOT NULL);");
+        FormatEx(sQuery, sizeof(sQuery), "CREATE TABLE IF NOT EXISTS `ljroom`(map VARCHAR(30) NOT NULL PRIMARY KEY, `x` FLOAT(8) NOT NULL, `y` FLOAT(8) NOT NULL, `z` FLOAT(8) NOT NULL, `x1` FLOAT(8) NOT NULL, `y1` FLOAT(8) NOT NULL);");
                                 
         gH_SQL.Query(SQL_CreateTable_Callback, sQuery);      
     }    
