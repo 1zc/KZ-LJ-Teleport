@@ -2,12 +2,17 @@
 
 #include <sourcemod>
 #include <sdktools>
+
+#undef REQUIRE_PLUGIN
+#include <gokz>
 #include <kztimer>
 
 Database gH_SQL;
 float gF_coords[64][3];
 float gF_angles[64][3];
 char gS_Map[64];
+bool gB_KZT = false;
+bool gB_GOKZ = false;
 
 public Plugin myinfo = 
 {
@@ -25,6 +30,16 @@ public void OnPluginStart()
     RegAdminCmd("sm_dellj", Command_DeleteLJ, ADMFLAG_GENERIC, "Delete the teleport for the LJ room");
     RegConsoleCmd("sm_lj", Command_LJ, "Teleports to LJ room");
     RegConsoleCmd("sm_ljroom", Command_LJ, "Teleports to LJ room");
+    
+    if(LibraryExists("KZTimer"))
+    {
+	gB_KZT = true;
+    }
+	
+	else if(LibraryExists("gokz-core"))
+    {
+	gB_GOKZ = true;
+    }
 
     SQL_DBConnect();
 }
@@ -138,8 +153,17 @@ public void SQL_GetLJ_Callback(Database db, DBResultSet results, const char[] er
    
     if(IsValidClient(client))
     {
-        KZTimer_StopTimer(client);
-        TeleportEntity(client, origin, angle, NULL_VECTOR);   
+        if(gB_KZT == true)
+	{
+	    KZTimer_StopTimer(client);
+	    TeleportEntity(client, origin, angle, NULL_VECTOR);   
+	}
+
+	else if(gB_GOKZ == true)
+	{
+	    GOKZ_StopTimer(client);
+	    TeleportEntity(client, origin, angle, NULL_VECTOR);   
+	}  
     }
 }
 
